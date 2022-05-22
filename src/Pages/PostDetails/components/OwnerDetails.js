@@ -1,5 +1,5 @@
 import React from "react";
-import { Avatar, Typography } from "@mui/material";
+import { Avatar, Skeleton, Typography } from "@mui/material";
 
 const OwnerDetails = ({ owner, pubDate, loading }) => {
   return (
@@ -8,18 +8,22 @@ const OwnerDetails = ({ owner, pubDate, loading }) => {
         display: "flex",
       }}
     >
-      <Avatar
-        alt={`${owner?.firstName} ${owner?.lastName}`}
-        src={owner?.picture}
-        style={{
-          width: 60,
-          height: 60,
-          fontFamily: "Roboto",
-          fontSize: 23,
-        }}
-      >
-        {`${owner?.firstName.charAt(0)} ${owner?.lastName.charAt(0)}`}
-      </Avatar>
+      {loading ? (
+        <Skeleton variant="circular" width={60} height={60} />
+      ) : (
+        <Avatar
+          alt={`${owner?.firstName} ${owner?.lastName}`}
+          src={owner?.picture}
+          style={{
+            width: 60,
+            height: 60,
+            fontFamily: "Roboto",
+            fontSize: 23,
+          }}
+        >
+          {`${owner?.firstName.charAt(0)} ${owner?.lastName.charAt(0)}`}
+        </Avatar>
+      )}
       <div
         style={{
           marginLeft: 20,
@@ -36,7 +40,11 @@ const OwnerDetails = ({ owner, pubDate, loading }) => {
             marginBottom: 7,
           }}
         >
-          {`${owner?.firstName} ${owner?.lastName}`}
+          {loading ? (
+            <Skeleton variant="rectangular" width={90} height={25} />
+          ) : (
+            `${owner?.firstName} ${owner?.lastName}`
+          )}
         </Typography>
         <Typography
           style={{
@@ -47,7 +55,11 @@ const OwnerDetails = ({ owner, pubDate, loading }) => {
             lineHeight: "18px",
           }}
         >
-          {new Date(pubDate).toLocaleDateString(undefined)}
+          {loading ? (
+            <Skeleton variant="rectangular" width={90} height={25} />
+          ) : (
+            new Date(pubDate).toLocaleDateString(undefined)
+          )}
         </Typography>
       </div>
     </div>

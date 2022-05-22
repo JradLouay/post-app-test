@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Button, TextField } from "@mui/material";
+import { Button, Skeleton, TextField } from "@mui/material";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { createComment, getComments } from "../../../postsApi";
 import { useForm, Controller } from "react-hook-form";
+import CommentItem from "./CommentItem";
 
 const Comments = ({ postId }) => {
   const {
@@ -68,43 +69,37 @@ const Comments = ({ postId }) => {
         }}
       >
         {" "}
-        {comments && (
-          <InfiniteScroll
-            dataLength={comments.length}
-            next={loadMoreComments}
-            hasMore={currentPage < Math.ceil(totalComments / 10)}
-            loader={
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  fontFamily: "Roboto",
-                  fontSize: "16px",
-                  fontWeight: "500",
-                }}
-              >
-                {" "}
-                <h4>Loading...</h4>{" "}
-              </div>
-            }
-            scrollableTarget="scrollablePart"
-          >
-            {" "}
-            {comments?.map((comment, index) => (
-              <div
-                style={{
-                  height: "74px",
-                  marginBottom: 10,
-                  borderRadius: "3px",
-                  backgroundColor: "#FFF",
-                  boxShadow: "0 1px 4px 0 rgba(0,0,0,0.1)",
-                }}
-              >
-                {comment.message}
-              </div>
-            ))}{" "}
-          </InfiniteScroll>
+        {loading ? (
+          <Skeleton variant="rectangular" height={74} width={"100%"} />
+        ) : (
+          comments && (
+            <InfiniteScroll
+              dataLength={comments.length}
+              next={loadMoreComments}
+              hasMore={currentPage < Math.ceil(totalComments / 10)}
+              loader={
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    fontFamily: "Roboto",
+                    fontSize: "16px",
+                    fontWeight: "500",
+                  }}
+                >
+                  {" "}
+                  <h4>Loading...</h4>{" "}
+                </div>
+              }
+              scrollableTarget="scrollablePart"
+            >
+              {" "}
+              {comments?.map((comment, index) => (
+                <CommentItem comment={comment} index={index} />
+              ))}{" "}
+            </InfiniteScroll>
+          )
         )}{" "}
       </div>{" "}
       <form

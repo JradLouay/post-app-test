@@ -14,7 +14,8 @@ import useUpdateEffect from "../../customHooks/useUpdateEffect";
 // the filter by tag doesn't accommodate the use of multiple tags,
 // instead we can use for each tag a new api call then we merge state which is overkill.
 
-// conclusion only one filter works at a time + i use only one tag
+// conclusion :
+// only one filter works at a time + i use only one tag
 
 const Posts = () => {
   const [posts, setPosts] = useState(null);
@@ -59,6 +60,7 @@ const Posts = () => {
         setLoading(false);
       }
     })();
+    return () => {};
   }, [selectedUser, selectedTags]);
 
   const loadMorePosts = async () => {

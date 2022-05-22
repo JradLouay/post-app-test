@@ -3,8 +3,6 @@ import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import { getTags, getUsers } from "../../../postsApi";
 import { Skeleton } from "@mui/material";
-import Chip from "@mui/material/Chip";
-import Stack from "@mui/material/Stack";
 
 const Filters = ({ selectedUser, selectUser, selectedTags, selectTags }) => {
   const [users, setUsers] = useState([]);
@@ -25,6 +23,7 @@ const Filters = ({ selectedUser, selectUser, selectedTags, selectTags }) => {
         setLoadingUsers(false);
       }
     })();
+    return () => {};
   }, []);
   useEffect(() => {
     (async function () {
@@ -38,6 +37,7 @@ const Filters = ({ selectedUser, selectUser, selectedTags, selectTags }) => {
         setLoadingTags(false);
       }
     })();
+    return () => {};
   }, []);
   const handleOnChangeUser = (_, value) => {
     selectUser(value);

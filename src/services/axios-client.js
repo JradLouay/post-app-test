@@ -1,5 +1,6 @@
 import axios from "axios";
 
+// axios client with baseUrl and default headers
 let AxiosClient = axios.create({
   baseURL: "https://dummyapi.io/data/v1",
   headers: {

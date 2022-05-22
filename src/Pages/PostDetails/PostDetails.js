@@ -1,18 +1,19 @@
-import React, { useEffect } from "react";
-import { Button, Grid, TextField, Typography } from "@mui/material";
-import OwnerDetails from "./components/OwnerDetails";
+import React from "react";
+import useFetch from "../../customHooks/fetchHook";
+import { useNavigate, useParams } from "react-router-dom";
+import { Button, Grid, Skeleton, Typography } from "@mui/material";
 import { ArrowBack, Instagram } from "@mui/icons-material";
 import Tags from "../../Components/Tags/Tags";
 import Likes from "../../Components/Likes/Likes";
-import { useNavigate, useParams } from "react-router-dom";
-import useFetch from "../../customHooks/fetchHook";
 import Comments from "./components/Comment";
+import OwnerDetails from "./components/OwnerDetails";
 
 const PostDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  // this the most readable way of sending httpRequests utilising custom hooks for a cleaner code
-  const [data, error, loading] = useFetch(`/post/${id}`);
+  // used a cutom fetch hook for sending httpRequests
+  // utilising custom hooks for a more cleaner and understandable code
+  const [data, loading] = useFetch(`/post/${id}`);
   const goBack = () => {
     navigate(-1);
   };
@@ -78,11 +79,16 @@ const PostDetails = () => {
             marginBottom: 20,
           }}
         >
-          <OwnerDetails owner={data?.owner} pubDate={data?.publishDate} />
+          <OwnerDetails
+            owner={data?.owner}
+            pubDate={data?.publishDate}
+            loading={loading}
+          />
           <Button disableElevation variant="contained" endIcon={<Instagram />}>
             View post
           </Button>
         </div>
+
         <img
           src={data?.image}
           alt=""
@@ -94,7 +100,25 @@ const PostDetails = () => {
             marginBottom: 15,
           }}
         ></img>
-        <Likes likes={data?.likes} />
+        <Typography
+          style={{
+            color: "#021846",
+            fontFamily: "Roboto",
+            fontSize: "26px",
+            fontWeight: "500",
+            letterSpacing: "0",
+            lineHeight: "28px",
+            height: 43,
+            marginBottom: 20,
+          }}
+        >
+          {loading ? (
+            <Skeleton variant="rectangular" width={100} heigh={40} />
+          ) : (
+            data?.text
+          )}
+        </Typography>
+        <Likes likes={data?.likes} loading={loading} />
         <Tags
           tags={data?.tags}
           style={{

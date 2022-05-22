@@ -1,8 +1,8 @@
 import React from "react";
 import { Favorite } from "@mui/icons-material";
-import { Typography } from "@mui/material";
+import { Skeleton, Typography } from "@mui/material";
 
-const Likes = ({ likes }) => {
+const Likes = ({ likes, loading }) => {
   return (
     <div
       style={{
@@ -23,7 +23,11 @@ const Likes = ({ likes }) => {
           fontSize: "17px",
         }}
       >
-        {`${likes} likes`}
+        {loading ? (
+          <Skeleton variant="rectangular" width={50} height={25} />
+        ) : (
+          `${likes} likes`
+        )}
       </Typography>
     </div>
   );

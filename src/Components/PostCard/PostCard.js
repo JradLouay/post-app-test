@@ -20,13 +20,13 @@ export default function PostCard({ post }) {
       <CardActionArea onClick={postDetails}>
         <CardHeader
           avatar={
-            <Avatar>
+            <Avatar src={post.owner.picture}>
               {`${post.owner.firstName.charAt(0)} ${post.owner.lastName.charAt(
                 0
               )}`}
             </Avatar>
           }
-          title={post.text}
+          title={`${post.owner.firstName} ${post.owner.lastName}`}
           subheader={new Date(post.publishDate).toLocaleDateString(undefined)}
         />
         <CardMedia
