@@ -4,12 +4,27 @@ import Grid from "@mui/material/Grid";
 import Filters from "./components/Filters";
 import { Skeleton, Typography } from "@mui/material";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { getPosts } from "./postsApi";
+import { getPosts } from "../../postsApi";
+import useUpdateEffect from "../../customHooks/useUpdateEffect";
+
+// Observations :
+// get posts route doesn't allow the filtering by tags and users at the same time,
+// hence developing it needs much more state manipulation "merge state from different routes"
+// and figuring out which filter is active and many other cases.
+// the filter by tag doesn't accommodate the use of multiple tags,
+// instead we can use for each tag a new api call then we merge state which is overkill.
+
+// conclusion only one filter works at a time + i use only one tag
+
 const Posts = () => {
   const [posts, setPosts] = useState(null);
-  const [loading, setLoading] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPosts, setTotalPosts] = useState(null);
+  const [loading, setLoading] = useState(null);
+  // filters data
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedTags, setSelectedTags] = useState([]);
+
   useEffect(() => {
     (async function () {
       try {
@@ -25,13 +40,35 @@ const Posts = () => {
     })();
     return () => {};
   }, []);
+
+  useUpdateEffect(() => {
+    // fires only on component update
+    (async function () {
+      try {
+        setLoading(true);
+        const { data } = await getPosts(
+          currentPage,
+          selectedUser,
+          selectedTags
+        );
+        setTotalPosts(data.total);
+        setPosts(data.data);
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [selectedUser, selectedTags]);
+
   const loadMorePosts = async () => {
-    // put limit as a global var
-    // here we can use two way loading (up and down) to reduce state size
-    // or react query hooks to handle all the data fetching
     if (currentPage <= Math.ceil(totalPosts / 10)) {
       try {
-        const { data } = await getPosts(currentPage + 1);
+        const { data } = await getPosts(
+          currentPage + 1,
+          selectedUser,
+          selectedTags
+        );
         setTotalPosts(data.total);
         setPosts((prev) => [...prev, ...data.data]);
         setCurrentPage(data.page);
@@ -40,6 +77,7 @@ const Posts = () => {
       }
     }
   };
+
   return (
     <Grid
       container
@@ -50,7 +88,7 @@ const Posts = () => {
         flexDirection: "column",
       }}
     >
-      <div style={{ marginBottom: 20 }}>
+      <div style={{ marginBottom: 10 }}>
         <Typography
           style={{
             color: "#021846",
@@ -65,12 +103,17 @@ const Posts = () => {
           Posts
         </Typography>
       </div>
-      <Filters />
+      <Filters
+        selectUser={setSelectedUser}
+        selectedUser={selectedUser}
+        selectedTags={selectedTags}
+        selectTags={setSelectedTags}
+      />
       <div
         id="scrollablePart"
         style={{
           marginTop: 20,
-          height: "calc(100vh - 183px)",
+          height: "calc(100vh - 210px)",
           overflow: "auto",
         }}
       >
@@ -88,6 +131,7 @@ const Posts = () => {
           </div>
         ) : (
           posts && (
+            // here we can use two way loading (up and down) to reduce state size for better performance
             <InfiniteScroll
               dataLength={posts.length}
               next={loadMorePosts}

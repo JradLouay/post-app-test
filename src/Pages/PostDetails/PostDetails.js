@@ -3,13 +3,13 @@ import { Button, Grid, TextField, Typography } from "@mui/material";
 import OwnerDetails from "./components/OwnerDetails";
 import { ArrowBack, Instagram } from "@mui/icons-material";
 import Tags from "../../Components/Tags/Tags";
-import Likes from "./components/Likes";
+import Likes from "../../Components/Likes/Likes";
 import { useNavigate, useParams } from "react-router-dom";
 import useFetch from "../../customHooks/fetchHook";
 import Comments from "./components/Comment";
 
 const PostDetails = () => {
-  let { id } = useParams();
+  const { id } = useParams();
   const navigate = useNavigate();
   // this the most readable way of sending httpRequests utilising custom hooks for a cleaner code
   const [data, error, loading] = useFetch(`/post/${id}`);
@@ -103,8 +103,8 @@ const PostDetails = () => {
             fontSize: "16px",
           }}
         />
+        <Comments postId={id} />
       </div>
-      <Comments />
     </Grid>
   );
 };

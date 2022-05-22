@@ -1,8 +1,13 @@
 .root {
   display: flex;
 }
-.appBarSpacer {
+.appBar {
   height: "70px";
+  color: #021846;
+  font-family: Roboto;
+  font-size: 26px;
+  font-weight: 500;
+  letter-spacing: 0;
 }
 
 .appContent {
@@ -10,7 +15,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  height: 100vh;
   overflow: auto;
-  padding: 30px;
+  padding-inline: 30px;
   background-color: #f9fafc;
 }

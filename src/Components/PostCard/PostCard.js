@@ -7,6 +7,7 @@ import Avatar from "@mui/material/Avatar";
 import { CardActionArea } from "@mui/material";
 import Tags from "../Tags/Tags";
 import { useNavigate } from "react-router-dom";
+import Likes from "../Likes/Likes";
 
 export default function PostCard({ post }) {
   const navigate = useNavigate();
@@ -25,7 +26,6 @@ export default function PostCard({ post }) {
               )}`}
             </Avatar>
           }
-          action={<>{post.likes}</>}
           title={post.text}
           subheader={new Date(post.publishDate).toLocaleDateString(undefined)}
         />
@@ -36,6 +36,7 @@ export default function PostCard({ post }) {
           alt={post.text}
         />
         <CardContent>
+          <Likes likes={post.likes} />
           <Tags tags={post.tags} />
         </CardContent>
       </CardActionArea>

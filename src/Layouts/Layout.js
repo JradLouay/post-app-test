@@ -1,15 +1,17 @@
-
 import React from "react";
-import { Outlet, Link } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import "./layoutStyles.css";
 const Layout = () => {
-    return (
+  return (
     <div className="root">
-    <main className="appContent">
-         <Outlet />
-    </main>
-  </div>
-    );
-  }
+      <main className="appContent">
+        <div className="appBar">
+          <p>Posts App</p>
+        </div>
+        <Outlet />
+      </main>
+    </div>
+  );
+};
 
-  export default Layout;
+export default Layout;

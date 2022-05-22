@@ -1,25 +1,23 @@
 import React, { useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
-import CircularProgress from "@mui/material/CircularProgress";
-import { getTags, getUsers } from "../postsApi";
+import { getTags, getUsers } from "../../../postsApi";
 import { Skeleton } from "@mui/material";
 import Chip from "@mui/material/Chip";
 import Stack from "@mui/material/Stack";
 
-const Filters = () => {
+const Filters = ({ selectedUser, selectUser, selectedTags, selectTags }) => {
   const [users, setUsers] = useState([]);
   const [tags, setTags] = useState([]);
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [selectedTags, setSelectedTags] = useState([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
   const [loadingTags, setLoadingTags] = useState(false);
   // we could load users and tags using api's pagination for each select for a better performance and reduced fetching time
-  React.useEffect(() => {
+  // both select also could be seperated into different components to make the code more readable and to handle state more elegantly
+  useEffect(() => {
     (async function () {
       try {
         setLoadingUsers(true);
-        const { data, status } = await getUsers();
+        const { data } = await getUsers();
         setUsers(data.data);
       } catch (err) {
         console.log(err);
@@ -28,11 +26,11 @@ const Filters = () => {
       }
     })();
   }, []);
-  React.useEffect(() => {
+  useEffect(() => {
     (async function () {
       try {
         setLoadingTags(true);
-        const { data, status } = await getTags();
+        const { data } = await getTags();
         setTags(data.data);
       } catch (err) {
         console.log(err);
@@ -41,6 +39,14 @@ const Filters = () => {
       }
     })();
   }, []);
+  const handleOnChangeUser = (_, value) => {
+    selectUser(value);
+    selectTags([]); // reset tags filter; one filter at a time
+  };
+  const handleOnChangeTags = (_, value) => {
+    selectTags(value);
+    selectUser(null); //reset user filter; one filter at time
+  };
   return (
     <div
       style={{
@@ -49,7 +55,7 @@ const Filters = () => {
         justifyContent: "flex-end",
       }}
     >
-      {/* each select here could be refactored as a component aside with it's own state */}
+      {/* each select here could be refactored as a component aside with it's own state more elegant way*/}
       {loadingTags ? (
         <Skeleton
           variant="rectangular"
@@ -59,15 +65,17 @@ const Filters = () => {
         />
       ) : (
         <Autocomplete
-          multiple
-          style={{ width: 300, marginLeft: 10 }}
-          size="small"
           id="tags-multiple-select"
+          multiple
           options={tags}
+          value={selectedTags}
+          onChange={handleOnChangeTags}
+          size="small"
           filterSelectedOptions
           renderInput={(params) => (
             <TextField {...params} label="Tags" placeholder="Tags" />
           )}
+          style={{ width: 300, marginLeft: 10 }}
         />
       )}
       {loadingUsers ? (
@@ -80,11 +88,13 @@ const Filters = () => {
       ) : (
         <Autocomplete
           id="user-select"
-          size="small"
           options={users}
+          value={selectedUser}
+          onChange={handleOnChangeUser}
           getOptionLabel={(option) => option.firstName}
+          size="small"
+          renderInput={(params) => <TextField {...params} label="Users" />}
           style={{ width: 300, marginLeft: 10 }}
-          renderInput={(params) => <TextField {...params} label="Movie" />}
         />
       )}
     </div>
