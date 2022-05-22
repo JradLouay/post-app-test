@@ -2,7 +2,7 @@ import React from "react";
 import { Favorite } from "@mui/icons-material";
 import { Typography } from "@mui/material";
 
-const Likes = () => {
+const Likes = ({ likes }) => {
   return (
     <div
       style={{
@@ -23,7 +23,7 @@ const Likes = () => {
           fontSize: "17px",
         }}
       >
-        {`${"25"} likes`}
+        {`${likes} likes`}
       </Typography>
     </div>
   );

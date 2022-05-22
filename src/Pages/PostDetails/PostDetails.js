@@ -1,14 +1,18 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Button, Grid, TextField, Typography } from "@mui/material";
 import OwnerDetails from "./components/OwnerDetails";
 import { ArrowBack, Instagram } from "@mui/icons-material";
 import Tags from "../../Components/Tags/Tags";
 import Likes from "./components/Likes";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import useFetch from "../../customHooks/fetchHook";
+import Comments from "./components/Comment";
 
 const PostDetails = () => {
+  let { id } = useParams();
   const navigate = useNavigate();
-
+  // this the most readable way of sending httpRequests utilising custom hooks for a cleaner code
+  const [data, error, loading] = useFetch(`/post/${id}`);
   const goBack = () => {
     navigate(-1);
   };
@@ -74,13 +78,13 @@ const PostDetails = () => {
             marginBottom: 20,
           }}
         >
-          <OwnerDetails />
+          <OwnerDetails owner={data?.owner} pubDate={data?.publishDate} />
           <Button disableElevation variant="contained" endIcon={<Instagram />}>
             View post
           </Button>
         </div>
         <img
-          src="https://img.dummyapi.io/photo-1564694202779-bc908c327862.jpg"
+          src={data?.image}
           alt=""
           style={{
             height: 300,
@@ -90,48 +94,17 @@ const PostDetails = () => {
             marginBottom: 15,
           }}
         ></img>
-        <Likes />
+        <Likes likes={data?.likes} />
         <Tags
-          tags={["louay", "jrad", "nixs", "maradonna"]}
+          tags={data?.tags}
           style={{
             padding: 10,
             fontFamily: "Roboto",
             fontSize: "16px",
           }}
         />
-        {/* comments section  */}
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            height: 252,
-            marginTop: 20,
-            marginBottom: 20,
-            overflowY: "auto",
-          }}
-        >
-          {Array.from(Array(18)).map((_, index) => (
-            <div
-              style={{
-                height: "74px",
-                marginBottom: 10,
-                borderRadius: "3px",
-                backgroundColor: "#FFF",
-                boxShadow: "0 1px 4px 0 rgba(0,0,0,0.1)",
-              }}
-            >
-              comment{" "}
-            </div>
-          ))}
-        </div>
-        <TextField
-          fullWidth
-          id="comment-input"
-          label="Comment"
-          multiline
-          rows={3}
-        />
       </div>
+      <Comments />
     </Grid>
   );
 };

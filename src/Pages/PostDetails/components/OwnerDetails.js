@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import { Avatar, Typography } from "@mui/material";
 
-const OwnerDetails = ({ owner, loading }) => {
-  //   const [loading, setLoading] = useState();
+const OwnerDetails = ({ owner, pubDate, loading }) => {
   return (
     <div
       style={{
@@ -10,8 +9,8 @@ const OwnerDetails = ({ owner, loading }) => {
       }}
     >
       <Avatar
-        alt="Remy Sharp"
-        src=""
+        alt={`${owner?.firstName} ${owner?.lastName}`}
+        src={owner?.picture}
         style={{
           width: 60,
           height: 60,
@@ -19,7 +18,7 @@ const OwnerDetails = ({ owner, loading }) => {
           fontSize: 23,
         }}
       >
-        {`L J`}
+        {`${owner?.firstName.charAt(0)} ${owner?.lastName.charAt(0)}`}
       </Avatar>
       <div
         style={{
@@ -37,7 +36,7 @@ const OwnerDetails = ({ owner, loading }) => {
             marginBottom: 7,
           }}
         >
-          {`louay jrad`}
+          {`${owner?.firstName} ${owner?.lastName}`}
         </Typography>
         <Typography
           style={{
@@ -48,10 +47,7 @@ const OwnerDetails = ({ owner, loading }) => {
             lineHeight: "18px",
           }}
         >
-          {loading
-            ? // <Skeleton width={200} />
-              `${"louay"}`
-            : `${"louay"}`}
+          {new Date(pubDate).toLocaleDateString(undefined)}
         </Typography>
       </div>
     </div>

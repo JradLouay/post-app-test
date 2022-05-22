@@ -1,8 +1,45 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import PostCard from "../../Components/PostCard/PostCard";
 import Grid from "@mui/material/Grid";
-import { Typography } from "@mui/material";
+import Filters from "./components/Filters";
+import { Skeleton, Typography } from "@mui/material";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { getPosts } from "./postsApi";
 const Posts = () => {
+  const [posts, setPosts] = useState(null);
+  const [loading, setLoading] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPosts, setTotalPosts] = useState(null);
+  useEffect(() => {
+    (async function () {
+      try {
+        setLoading(true);
+        const { data } = await getPosts(currentPage);
+        setTotalPosts(data.total);
+        setPosts(data.data);
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setLoading(false);
+      }
+    })();
+    return () => {};
+  }, []);
+  const loadMorePosts = async () => {
+    // put limit as a global var
+    // here we can use two way loading (up and down) to reduce state size
+    // or react query hooks to handle all the data fetching
+    if (currentPage <= Math.ceil(totalPosts / 10)) {
+      try {
+        const { data } = await getPosts(currentPage + 1);
+        setTotalPosts(data.total);
+        setPosts((prev) => [...prev, ...data.data]);
+        setCurrentPage(data.page);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  };
   return (
     <Grid
       container
@@ -28,26 +65,60 @@ const Posts = () => {
           Posts
         </Typography>
       </div>
+      <Filters />
       <div
+        id="scrollablePart"
         style={{
-          display: "flex",
-          flexDirection: "column",
-          marginTop: 20, // padding
-          height: "calc(100vh - 183px)", //
+          marginTop: 20,
+          height: "calc(100vh - 183px)",
           overflow: "auto",
         }}
       >
-        <Grid container spacing={{ xs: 2 }} style={{}}>
-          {Array.from(Array(5)).map((_, index) => (
-            <Grid
-              item
-              // xs={2} sm={4} md={4}
-              key={index}
+        {" "}
+        {loading ? (
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: 20,
+            }}
+          >
+            <Skeleton variant="rectangular" width={345} height={366} />
+            <Skeleton variant="rectangular" width={345} height={366} />
+          </div>
+        ) : (
+          posts && (
+            <InfiniteScroll
+              dataLength={posts.length}
+              next={loadMorePosts}
+              hasMore={currentPage < Math.ceil(totalPosts / 10)}
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: 20,
+              }}
+              loader={
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    fontFamily: "Roboto",
+                    fontSize: "16px",
+                    fontWeight: "500",
+                  }}
+                >
+                  <h4>Loading...</h4>{" "}
+                </div>
+              }
+              scrollableTarget="scrollablePart"
             >
-              <PostCard />
-            </Grid>
-          ))}
-        </Grid>
+              {posts?.map((post, index) => (
+                <PostCard post={post} />
+              ))}
+            </InfiniteScroll>
+          )
+        )}
       </div>
     </Grid>
   );

@@ -20,7 +20,7 @@ export default function Tags({ tags, style = {} }) {
       }}
       component="ul"
     >
-      {tags.map((data, index) => (
+      {tags?.map((data, index) => (
         <ListItem key={index}>
           <Chip label={data} style={style} />
         </ListItem>
