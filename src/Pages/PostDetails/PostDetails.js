@@ -17,6 +17,10 @@ const PostDetails = () => {
   const goBack = () => {
     navigate(-1);
   };
+  // navigate to post link
+  const redirectToInstagram = () => {
+    window.location.replace(data.link);
+  };
   return (
     <Grid
       container
@@ -84,7 +88,12 @@ const PostDetails = () => {
             pubDate={data?.publishDate}
             loading={loading}
           />
-          <Button disableElevation variant="contained" endIcon={<Instagram />}>
+          <Button
+            onClick={redirectToInstagram}
+            disableElevation
+            variant="contained"
+            endIcon={<Instagram />}
+          >
             View post
           </Button>
         </div>
